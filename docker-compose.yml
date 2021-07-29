@@ -1,0 +1,44 @@
+version: '3.5'
+
+services:
+  postgres:
+    image: postgres:11.6
+    restart: unless-stopped
+    container_name: postgres
+    ports:
+      - "5432:5432"
+#    environment:
+#      POSTGRES_PASSWORD: ${DB_PASSWORD}
+#      POSTGRES_DB: ${DB_NAME}
+#      POSTGRES_USER: ${DB_USER}
+    env_file:
+      - .env.postgres
+#    volumes:
+#      - ~/srv/docker/template-postgres/data:/var/lib/postgresql/data:rw
+
+  django:
+    container_name: django
+    build:
+      context: .
+      dockerfile: ./backend/Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app:rw
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+
+#  react:
+#    container_name: react
+#    build:
+#      context: .
+#      dockerfile: ./conf/react/Dockerfile
+#    command: yarn run start:dev
+#    ports:
+#      - "4000:4000"
+#    volumes:
+#      - ./front/src:/app/src:rw
+#      - ./front/public:/app/public:rw
