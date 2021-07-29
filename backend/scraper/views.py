@@ -17,6 +17,7 @@ def time(request):
 @api_view(["POST"])
 def scrape(request):
     url = request.data["url"]
+    sample_size = request.data["sample_size"]
     words_pattern = '[a-zA-Z]+'
 
     page = requests.get(url)
@@ -28,7 +29,6 @@ def scrape(request):
     for word in words:
         occurrences[word.lower()] = occurrences.get(word.lower(), 0) + 1
 
-    sample_size = 10
     keys = list(occurrences.keys())[:sample_size]
     sample = {key: occurrences[key] for key in keys}
     return Response({"word_occurrences": sample})
