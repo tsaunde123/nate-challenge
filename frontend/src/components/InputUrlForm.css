@@ -1,0 +1,28 @@
+.inputsContainer {
+  display: block;
+}
+
+.urlContainer {
+  display: block;
+}
+
+.sampleSizeContainer {
+  display: block;
+}
+
+.url {
+  width: 256px;
+}
+
+.sampleSize {
+  width: 48px;
+}
+
+.label {
+  margin-right: 24px;
+}
+
+.error {
+  font-size: small;
+  color: red;
+}
