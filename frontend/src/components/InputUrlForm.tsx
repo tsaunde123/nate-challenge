@@ -8,14 +8,25 @@ import { useAutocomplete, Autocomplete } from "@material-ui/lab";
 import TextField from "@material-ui/core/TextField";
 import useSWR from "swr";
 import fetcher from "src/lib/fetch";
+import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 interface IFormInputs {
-  url: string;
+  url: { label: string; value: string };
   sampleSize: number;
 }
 
+// The url type is an object rather than a string because the input field returns an object based on the user's
+// input rather than a string, which would otherwise cause validation errors.
 const schema = yup.object().shape({
-  url: yup.string().url().required(),
+  // url: yup.string().url().required(),
+  url: yup
+    .object()
+    .shape({
+      label: yup.string().url().required(),
+      value: yup.string().url().required(),
+    })
+    .required("This field is required"),
   sampleSize: yup.number().positive().integer().required(),
 });
 
@@ -86,35 +97,49 @@ export default function InputUrlForm({
     resolver: yupResolver(schema),
   });
 
-  const { data: pastSearches, error } = useSWR(ApiRoutes.Searches, fetcher);
+  const {
+    data: pastSearches,
+    error,
+    mutate,
+  } = useSWR(ApiRoutes.Searches, fetcher);
 
   useEffect(() => {
     isLoading(isSubmitting);
   }, [isLoading, isSubmitting]);
 
+  const flattenValue = (option: { value: string; label: string }) =>
+    option.value;
+
   const onSubmit = async (formData: IFormInputs) => {
     if (!isDirty) return;
     // const url = "https://www.bbc.co.uk/";
     // const url2 = "https://norvig.com/big.txt";
+    const url: string = flattenValue(formData.url as any);
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        url: formData.url,
+        url: url,
         sample_size: formData.sampleSize,
       }),
     };
-    const response = await fetch(ApiRoutes.Scraper, requestOptions);
-    const data = await response.json();
-    showResults(data.word_occurrences);
-    // TODO handle errors
+    try {
+      const response = await fetch(ApiRoutes.Scraper, requestOptions);
+      const data = await response.json();
+      showResults(data.word_occurrences);
+      mutate();
+    } catch {
+      // TODO handle errors
+      alert("Request failed.");
+      return;
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="inputsContainer">
         <div className="urlContainer">
-          <Controller
+          {/* <Controller
             render={({ field: { onChange }, ...props }) => (
               <Autocomplete
                 {...props}
@@ -132,8 +157,28 @@ export default function InputUrlForm({
             )}
             name="url"
             control={control}
+          /> */}
+          <Controller
+            control={control}
+            name="url"
+            render={({ field: { onChange, value }, field, ...props }) => {
+              return (
+                <CreatableSelect
+                  isClearable
+                  {...field}
+                  onChange={onChange}
+                  options={pastSearches?.urls.map((val) => {
+                    return { value: val, label: val };
+                  })}
+                />
+              );
+            }}
+            // //@ts-ignore
+            // hasError={errors.url?.value}
+            // //@ts-ignore
+            // message={errors.url?.value?.message}
           />
-          <ErrorMessage message={errors.url?.message} />
+          <ErrorMessage message={errors.url?.value?.message} />
         </div>
         <div className="sampleSizeContainer">
           <label className="label">Sample size:</label>
