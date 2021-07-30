@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import "./InputUrlForm.css";
+import { ApiRoutes } from "src/lib/api";
 
 interface IFormInputs {
   url: string;
@@ -28,33 +29,33 @@ export default function InputUrlForm({
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<IFormInputs>({
     resolver: yupResolver(schema),
   });
   // const [wordOccurrences, setWordOccurrences] = useState({});
   // const onSubmit = (data: IFormInputs) => console.log(data);
-  console.log("isSubmitting: " + isSubmitting);
 
   useEffect(() => {
     isLoading(isSubmitting);
   }, [isLoading, isSubmitting]);
 
   const onSubmit = async (formData: IFormInputs) => {
-    // event.preventDefault();
+    if (!isDirty) return;
     // const url = "https://www.bbc.co.uk/";
     // const url2 = "https://norvig.com/big.txt";
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: formData.url }),
+      body: JSON.stringify({
+        url: formData.url,
+        sample_size: formData.sampleSize,
+      }),
     };
-    const response = await fetch(
-      "http://localhost:8000/api/scrape",
-      requestOptions
-    );
+    const response = await fetch(ApiRoutes.Scraper, requestOptions);
     const data = await response.json();
     showResults(data.word_occurrences);
+    // TODO handle errors
   };
 
   return (
