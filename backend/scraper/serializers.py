@@ -25,15 +25,16 @@ class ScraperEntitySerializer(serializers.ModelSerializer):
         return entity.end_time - entity.start_time
 
     def get_word_occurrences(self, entity: ScraperEntity):
-        max_sample_size = len(entity.word_occurrences)
+        word_occurrences = entity.word_occurrences or {}
+        max_sample_size = len(word_occurrences)
         sample_size = self.context.get("sample_size", 10)
         sample_size = max_sample_size if sample_size > max_sample_size else sample_size
-        keys = list(entity.word_occurrences.keys())[:sample_size]
-        sample = {key: entity.word_occurrences[key] for key in keys}
+        keys = list(word_occurrences.keys())[:sample_size]
+        sample = {key: word_occurrences[key] for key in keys}
         return sample
 
     def get_total_occurrences(self, entity: ScraperEntity):
-        return len(entity.word_occurrences)
+        return len(entity.word_occurrences or {})
 
     def create(self, validated_data):
         freeze_time = now()
