@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.utils.timezone import now
 
 from .models import ScraperEntity
 
@@ -14,8 +15,6 @@ class ScraperEntitySerializer(serializers.ModelSerializer):
         fields = (
             "url",
             "word_occurrences",
-            "time_exceeded",
-            "exception",
             "sample_size",
             "completion_time",
         )
@@ -24,13 +23,15 @@ class ScraperEntitySerializer(serializers.ModelSerializer):
         return entity.end_time - entity.start_time
 
     def get_word_occurrences(self, entity: ScraperEntity):
-        sample_size = self.context["sample_size"]
+        sample_size = self.context.get("sample_size", 10)
         keys = list(entity.word_occurrences.keys())[:sample_size]
         sample = {key: entity.word_occurrences[key] for key in keys}
         return sample
 
     def create(self, validated_data):
-        entity, created = ScraperEntity.objects.get_or_create(
-            url=validated_data.get("url").rstrip("/")
+        freeze_time = now()
+        entity, created = ScraperEntity.objects.update_or_create(
+            url=validated_data.get("url").rstrip("/"),
+            defaults=dict(start_time=freeze_time, end_time=freeze_time)
         )
         return entity, created

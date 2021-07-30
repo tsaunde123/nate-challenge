@@ -9,6 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.utils.timezone import now
 
+from .models import ScraperEntity
 from .serializers import ScraperEntitySerializer
 
 
@@ -40,6 +41,12 @@ def scrape(request):
     entity.save()
 
     return Response(ScraperEntitySerializer(entity, context=context).data)
+
+
+@api_view(["GET"])
+def list_searches(request):
+    urls = ScraperEntity.objects.all().order_by("-start_time").values_list("url", flat=True)[:10]
+    return Response(dict(urls=urls))
 
 
 def scrape_url(url: str) -> Tuple[str, Dict[str, int]]:
