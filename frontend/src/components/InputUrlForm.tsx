@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import "./InputUrlForm.css";
 import { ApiRoutes } from "src/lib/api";
+import { useAutocomplete, Autocomplete } from "@material-ui/lab";
+import TextField from "@material-ui/core/TextField";
+import useSWR from "swr";
+import fetcher from "src/lib/fetch";
 
 interface IFormInputs {
   url: string;
@@ -19,6 +23,53 @@ function ErrorMessage({ message }: { message: string }) {
   return <p className="error">{message}</p>;
 }
 
+const ControlledAutocomplete = ({
+  options = [],
+  renderInput,
+  getOptionLabel,
+  onChange: ignored,
+  control,
+  defaultValue,
+  name,
+  renderOption,
+}) => {
+  return (
+    <>
+      {/* <Controller
+        render={({ ...props }) => (
+          <Autocomplete
+            options={options}
+            getOptionLabel={getOptionLabel}
+            renderOption={renderOption}
+            renderInput={renderInput}
+            // onChange={(e, data) => onChange(data)}
+            {...props}
+          />
+        )}
+        // onChange={([, data]) => data}
+        defaultValue={defaultValue}
+        name={name}
+        control={control}
+      /> */}
+      <Controller
+        render={({ field: { onChange }, ...props }) => (
+          <Autocomplete
+            {...props}
+            options={options}
+            getOptionLabel={getOptionLabel}
+            renderOption={renderOption}
+            renderInput={renderInput}
+            onChange={(_, data) => onChange(data)}
+          />
+        )}
+        defaultValue={defaultValue}
+        name={name}
+        control={control}
+      />
+    </>
+  );
+};
+
 export default function InputUrlForm({
   showResults,
   isLoading,
@@ -28,11 +79,15 @@ export default function InputUrlForm({
 }) {
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting, isDirty },
   } = useForm<IFormInputs>({
     resolver: yupResolver(schema),
   });
+
+  const { data: pastSearches, error } = useSWR(ApiRoutes.Searches, fetcher);
+
   // const [wordOccurrences, setWordOccurrences] = useState({});
   // const onSubmit = (data: IFormInputs) => console.log(data);
 
@@ -62,8 +117,52 @@ export default function InputUrlForm({
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="inputsContainer">
         <div className="urlContainer">
-          <label className="label">Enter a url:</label>
+          {/* <label className="label">Enter a url:</label>
           <input className="url" {...register("url")} />
+          <ErrorMessage message={errors.url?.message} /> */}
+          {/* <Controller
+            name="url"
+            control={control}
+            render={({ field }) => <TextField {...field} label="url" />}
+            // hasError={errors.url}
+            // message={errors.url?.message}
+          /> */}
+          {/* <ControlledAutocomplete
+            control={control}
+            name="url"
+            options={pastSearches?.urls}
+            getOptionLabel={(option) => option}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="url"
+                margin="normal"
+                error={errors["url"]}
+              />
+            )}
+            defaultValue={null}
+            onChange={null}
+            renderOption={null}
+          /> */}
+          <Controller
+            render={({ field: { onChange }, ...props }) => (
+              <Autocomplete
+                {...props}
+                options={pastSearches?.urls}
+                getOptionLabel={(option: string) => option}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Choose a url"
+                    variant="outlined"
+                  />
+                )}
+                onChange={(_, data) => onChange(data)}
+              />
+            )}
+            name="url"
+            control={control}
+          />
           <ErrorMessage message={errors.url?.message} />
         </div>
         <div className="sampleSizeContainer">
