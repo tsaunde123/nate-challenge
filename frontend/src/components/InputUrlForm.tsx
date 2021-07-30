@@ -88,9 +88,6 @@ export default function InputUrlForm({
 
   const { data: pastSearches, error } = useSWR(ApiRoutes.Searches, fetcher);
 
-  // const [wordOccurrences, setWordOccurrences] = useState({});
-  // const onSubmit = (data: IFormInputs) => console.log(data);
-
   useEffect(() => {
     isLoading(isSubmitting);
   }, [isLoading, isSubmitting]);
@@ -117,33 +114,6 @@ export default function InputUrlForm({
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="inputsContainer">
         <div className="urlContainer">
-          {/* <label className="label">Enter a url:</label>
-          <input className="url" {...register("url")} />
-          <ErrorMessage message={errors.url?.message} /> */}
-          {/* <Controller
-            name="url"
-            control={control}
-            render={({ field }) => <TextField {...field} label="url" />}
-            // hasError={errors.url}
-            // message={errors.url?.message}
-          /> */}
-          {/* <ControlledAutocomplete
-            control={control}
-            name="url"
-            options={pastSearches?.urls}
-            getOptionLabel={(option) => option}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="url"
-                margin="normal"
-                error={errors["url"]}
-              />
-            )}
-            defaultValue={null}
-            onChange={null}
-            renderOption={null}
-          /> */}
           <Controller
             render={({ field: { onChange }, ...props }) => (
               <Autocomplete
