@@ -35,8 +35,7 @@ def scrape(request):
         if last_scrape < timedelta(hours=3):
             return Response(ScraperEntitySerializer(entity, context=context).data)
 
-    html, word_occurrences = scrape_url(entity.url)
-    entity.html = html
+    word_occurrences = scrape_url(entity.url)
     entity.word_occurrences = word_occurrences
     entity.end_time = now()
     entity.save()
@@ -51,12 +50,11 @@ def list_searches(request):
     return Response(dict(urls=urls))
 
 
-def scrape_url(url: str) -> Tuple[str, Dict[str, int]]:
+def scrape_url(url: str) -> Dict[str, int]:
     words_pattern = "[a-zA-Z]+"
 
     try:
         page = requests.get(url)
-        raw_html = page.text
         html = page.content
         soup = BeautifulSoup(html, "html.parser")
 
@@ -64,6 +62,6 @@ def scrape_url(url: str) -> Tuple[str, Dict[str, int]]:
         occurrences = {}
         for word in words:
             occurrences[word.lower()] = occurrences.get(word.lower(), 0) + 1
-        return raw_html, occurrences
+        return occurrences
     except Exception:
-        return "", {}
+        return {}
