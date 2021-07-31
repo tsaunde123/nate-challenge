@@ -1,8 +1,13 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import App from "./App";
 
-test('renders learn react link', () => {
+/**
+ * @jest-environment jsdom
+ */
+
+test("renders Nate Challenge title", () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
+  const linkElement = screen.getByText(/Nate Challenge/i);
   expect(linkElement).toBeInTheDocument();
 });

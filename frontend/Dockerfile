@@ -1,6 +1,4 @@
 FROM node:10-alpine
-MAINTAINER Robert Wells <rwells@dvele.com>
-
 
 WORKDIR /tmp
 COPY frontend/package.json /tmp/

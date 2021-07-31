@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import "./InputUrlForm.css";
 import { ApiRoutes } from "src/lib/api";
-import { useAutocomplete, Autocomplete } from "@material-ui/lab";
-import TextField from "@material-ui/core/TextField";
+import { Autocomplete } from "@material-ui/lab";
 import useSWR from "swr";
 import fetcher from "src/lib/fetch";
-import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
 interface IFormInputs {
