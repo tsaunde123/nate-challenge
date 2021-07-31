@@ -1,3 +1,4 @@
+import React from "react";
 import { Control, Controller } from "react-hook-form";
 import CreatableSelect from "react-select/creatable";
 
@@ -36,6 +37,7 @@ export default function ControlledAutocomplete(
               options={options}
               placeholder={placeholder}
               {...props}
+              classNamePrefix="autoCompleteContainer"
             />
           );
         }}

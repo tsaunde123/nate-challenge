@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { ErrorMessage } from "@hookform/error-message";
 import * as yup from "yup";
 import "./InputUrlForm.css";
 import { ApiRoutes } from "src/lib/api";
 
 import { useHistory } from "src/lib/hooks";
-import ErrorMessage from "./ErrorMessage";
 import ControlledAutocomplete from "./ControlledAutocomplete";
 
 interface IFormInputs {
@@ -17,15 +17,20 @@ interface IFormInputs {
 // The url type is an object rather than a string because the input field returns an object based on the user's
 // input rather than a string, which would otherwise cause validation errors.
 const schema = yup.object().shape({
-  // url: yup.string().url().required(),
   url: yup
     .object()
     .shape({
       label: yup.string().url().required(),
       value: yup.string().url().required(),
     })
-    .required("This field is required"),
-  sampleSize: yup.number().positive().integer().required(),
+    .required("This field is required")
+    .typeError("Please enter a valid url: e.g. https://www.bbc.com"),
+  sampleSize: yup
+    .number()
+    .positive()
+    .integer()
+    .required("This field is required")
+    .typeError("Please enter a valid a number"),
 });
 
 export default function InputUrlForm({
@@ -74,6 +79,7 @@ export default function InputUrlForm({
     } catch {
       // TODO handle errors
       alert("Request failed.");
+      console.log(error);
       return;
     }
   };
@@ -91,20 +97,31 @@ export default function InputUrlForm({
             })}
             placeholder="Select or enter a url..."
           />
-          <ErrorMessage message={errors.url?.value?.message} />
+          <ErrorMessage
+            errors={errors}
+            name="url"
+            render={({ message }) => <p className="error">{message}</p>}
+          />
         </div>
         <div className="sampleSizeContainer">
           <label className="label">Sample size:</label>
           <input
+            data-testid="sampleSize"
             className="sampleSize"
             {...register("sampleSize")}
             defaultValue={10}
           />
-          <ErrorMessage message={errors.sampleSize?.message} />
+          <ErrorMessage
+            errors={errors}
+            name="sampleSize"
+            render={({ message }) =>
+              errors.sampleSize && <p className="error">{message}</p>
+            }
+          />
         </div>
       </div>
 
-      <input type="submit" />
+      <input type="submit" className="submit" />
     </form>
   );
 }

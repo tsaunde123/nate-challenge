@@ -8,6 +8,7 @@
 
 .sampleSizeContainer {
   display: block;
+  margin-top: 16px;
 }
 
 .url {
@@ -20,4 +21,13 @@
 
 .label {
   margin-right: 24px;
+}
+
+.submit {
+  margin-top: 16px;
+}
+
+.error {
+  font-size: small;
+  color: red;
 }
