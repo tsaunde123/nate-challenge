@@ -2,11 +2,14 @@ import useSWR from "swr";
 import { ApiRoutes } from "./api";
 import fetcher from "./fetch";
 
+interface IHistoryType {
+  urls: Array<string>;
+}
+
 export function useHistory() {
-  const {
-    data: pastSearches,
-    error,
-    mutate,
-  } = useSWR(ApiRoutes.Searches, fetcher);
-  return { history: pastSearches?.urls || [], error, mutate };
+  const { data, error, mutate } = useSWR<IHistoryType>(
+    ApiRoutes.Searches,
+    fetcher
+  );
+  return { history: data?.urls || [], error, mutate };
 }
