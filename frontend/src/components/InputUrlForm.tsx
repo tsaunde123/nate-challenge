@@ -41,12 +41,13 @@ export default function InputUrlForm({
   history = [],
 }: {
   onSubmit: ({ url, sampleSize }: IFormSubmissionProps) => {};
-  history: any;
+  history?: any;
 }) {
   const {
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors, isDirty },
   } = useForm<IFormInputsProps>({
     resolver: yupResolver(schema),
@@ -60,6 +61,7 @@ export default function InputUrlForm({
     const url: string = flattenValue(formData.url as any);
     const sampleSize: number = formData.sampleSize;
     submitForm({ url, sampleSize });
+    reset();
   };
 
   return (
@@ -78,7 +80,11 @@ export default function InputUrlForm({
           <ErrorMessage
             errors={errors}
             name="url"
-            render={({ message }) => <p className="error">{message}</p>}
+            render={({ message }) => (
+              <p className="error" data-testid="urlError">
+                {message}
+              </p>
+            )}
           />
         </div>
         <div className="sampleSizeContainer">
@@ -92,9 +98,11 @@ export default function InputUrlForm({
           <ErrorMessage
             errors={errors}
             name="sampleSize"
-            render={({ message }) =>
-              errors.sampleSize && <p className="error">{message}</p>
-            }
+            render={({ message }) => (
+              <p className="error" data-testid="sampleSizeError">
+                {message}
+              </p>
+            )}
           />
         </div>
       </div>
