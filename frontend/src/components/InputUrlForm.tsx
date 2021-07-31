@@ -4,7 +4,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import "./InputUrlForm.css";
 import { ApiRoutes } from "src/lib/api";
-import { Autocomplete } from "@material-ui/lab";
 import CreatableSelect from "react-select/creatable";
 import { useHistory } from "src/lib/hooks";
 
@@ -33,46 +32,28 @@ function ErrorMessage({ message }: { message: string }) {
 
 const ControlledAutocomplete = ({
   options = [],
-  renderInput,
-  getOptionLabel,
-  onChange: ignored,
   control,
   defaultValue,
   name,
-  renderOption,
+  placeholder,
 }) => {
   return (
     <>
-      {/* <Controller
-        render={({ ...props }) => (
-          <Autocomplete
-            options={options}
-            getOptionLabel={getOptionLabel}
-            renderOption={renderOption}
-            renderInput={renderInput}
-            // onChange={(e, data) => onChange(data)}
-            {...props}
-          />
-        )}
-        // onChange={([, data]) => data}
-        defaultValue={defaultValue}
-        name={name}
-        control={control}
-      /> */}
       <Controller
-        render={({ field: { onChange }, ...props }) => (
-          <Autocomplete
-            {...props}
-            options={options}
-            getOptionLabel={getOptionLabel}
-            renderOption={renderOption}
-            renderInput={renderInput}
-            onChange={(_, data) => onChange(data)}
-          />
-        )}
-        defaultValue={defaultValue}
-        name={name}
         control={control}
+        name={name}
+        render={({ field: { onChange, value }, field, ...props }) => {
+          return (
+            <CreatableSelect
+              isClearable
+              {...field}
+              onChange={onChange}
+              options={options}
+              placeholder={placeholder}
+            />
+          );
+        }}
+        defaultValue={defaultValue}
       />
     </>
   );
@@ -132,40 +113,14 @@ export default function InputUrlForm({
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="inputsContainer">
         <div className="urlContainer">
-          {/* <Controller
-            render={({ field: { onChange }, ...props }) => (
-              <Autocomplete
-                {...props}
-                options={pastSearches?.urls}
-                getOptionLabel={(option: string) => option}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Choose a url"
-                    variant="outlined"
-                  />
-                )}
-                onChange={(_, data) => onChange(data)}
-              />
-            )}
-            name="url"
-            control={control}
-          /> */}
-          <Controller
+          <ControlledAutocomplete
             control={control}
             name="url"
-            render={({ field: { onChange, value }, field, ...props }) => {
-              return (
-                <CreatableSelect
-                  isClearable
-                  {...field}
-                  onChange={onChange}
-                  options={history.map((val) => {
-                    return { value: val, label: val };
-                  })}
-                />
-              );
-            }}
+            options={history.map((val) => {
+              return { value: val, label: val };
+            })}
+            placeholder="Select or enter a url..."
+            defaultValue={null}
           />
           <ErrorMessage message={errors.url?.value?.message} />
         </div>
