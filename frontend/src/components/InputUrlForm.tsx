@@ -5,9 +5,8 @@ import * as yup from "yup";
 import "./InputUrlForm.css";
 import { ApiRoutes } from "src/lib/api";
 import { Autocomplete } from "@material-ui/lab";
-import useSWR from "swr";
-import fetcher from "src/lib/fetch";
 import CreatableSelect from "react-select/creatable";
+import { useHistory } from "src/lib/hooks";
 
 interface IFormInputs {
   url: { label: string; value: string };
@@ -95,11 +94,7 @@ export default function InputUrlForm({
     resolver: yupResolver(schema),
   });
 
-  const {
-    data: pastSearches,
-    error,
-    mutate,
-  } = useSWR(ApiRoutes.Searches, fetcher);
+  const { history, error, mutate } = useHistory();
 
   useEffect(() => {
     isLoading(isSubmitting);
@@ -165,16 +160,12 @@ export default function InputUrlForm({
                   isClearable
                   {...field}
                   onChange={onChange}
-                  options={pastSearches?.urls.map((val) => {
+                  options={history.map((val) => {
                     return { value: val, label: val };
                   })}
                 />
               );
             }}
-            // //@ts-ignore
-            // hasError={errors.url?.value}
-            // //@ts-ignore
-            // message={errors.url?.value?.message}
           />
           <ErrorMessage message={errors.url?.value?.message} />
         </div>
