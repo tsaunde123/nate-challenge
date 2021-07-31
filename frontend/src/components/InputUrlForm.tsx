@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import "./InputUrlForm.css";
 import { ApiRoutes } from "src/lib/api";
-import CreatableSelect from "react-select/creatable";
+
 import { useHistory } from "src/lib/hooks";
 import ErrorMessage from "./ErrorMessage";
+import ControlledAutocomplete from "./ControlledAutocomplete";
 
 interface IFormInputs {
   url: { label: string; value: string };
@@ -26,35 +27,6 @@ const schema = yup.object().shape({
     .required("This field is required"),
   sampleSize: yup.number().positive().integer().required(),
 });
-
-const ControlledAutocomplete = ({
-  options = [],
-  control,
-  defaultValue,
-  name,
-  placeholder,
-}) => {
-  return (
-    <>
-      <Controller
-        control={control}
-        name={name}
-        render={({ field: { onChange, value }, field, ...props }) => {
-          return (
-            <CreatableSelect
-              isClearable
-              {...field}
-              onChange={onChange}
-              options={options}
-              placeholder={placeholder}
-            />
-          );
-        }}
-        defaultValue={defaultValue}
-      />
-    </>
-  );
-};
 
 export default function InputUrlForm({
   showResults,
@@ -111,13 +83,13 @@ export default function InputUrlForm({
       <div className="inputsContainer">
         <div className="urlContainer">
           <ControlledAutocomplete
+            className="urlInput"
             control={control}
             name="url"
             options={history.map((val) => {
               return { value: val, label: val };
             })}
             placeholder="Select or enter a url..."
-            defaultValue={null}
           />
           <ErrorMessage message={errors.url?.value?.message} />
         </div>
