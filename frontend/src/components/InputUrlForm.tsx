@@ -6,6 +6,7 @@ import "./InputUrlForm.css";
 import { ApiRoutes } from "src/lib/api";
 import CreatableSelect from "react-select/creatable";
 import { useHistory } from "src/lib/hooks";
+import ErrorMessage from "./ErrorMessage";
 
 interface IFormInputs {
   url: { label: string; value: string };
@@ -25,10 +26,6 @@ const schema = yup.object().shape({
     .required("This field is required"),
   sampleSize: yup.number().positive().integer().required(),
 });
-
-function ErrorMessage({ message }: { message: string }) {
-  return <p className="error">{message}</p>;
-}
 
 const ControlledAutocomplete = ({
   options = [],
