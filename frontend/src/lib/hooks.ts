@@ -8,7 +8,7 @@ interface IHistoryType {
 
 export function useHistory() {
   const { data, error, mutate } = useSWR<IHistoryType>(
-    ApiRoutes.Searches,
+    ApiRoutes.History,
     fetcher
   );
   return { history: data?.urls || [], error, mutate };
