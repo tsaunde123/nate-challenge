@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import InputUrlForm from "./components/InputUrlForm";
-import { ApiRoutes, scrapeUrl } from "./lib/api";
+import { scrapeUrl } from "./lib/api";
 import { useHistory } from "src/lib/hooks";
+import { ApiRoutes } from "./lib/constants";
+import moment from "moment";
 
 function WordOccurrences(wordOccurrences) {
   return (
@@ -22,8 +24,10 @@ function WordOccurrences(wordOccurrences) {
 function App() {
   const [currentTime, setCurrentTime] = useState(0);
   const [wordOccurrences, setWordOccurrences] = useState({});
+  const [metadata, setMetadata] = useState({});
   const [loading, isLoading] = useState(false);
   const { history, mutate } = useHistory();
+  const hasData = (obj) => Object.keys(obj || {}).length > 0;
 
   useEffect(() => {
     fetch(ApiRoutes.Time)
@@ -33,20 +37,21 @@ function App() {
       });
   }, []);
 
-  useEffect(() => {
-    if (Object.keys(wordOccurrences.length > 0)) {
-      isLoading(false);
-    }
-  }, [wordOccurrences]);
-
   const onSubmit = async ({ url, sampleSize }) => {
     // const url = "https://www.bbc.co.uk/";
     // const url2 = "https://norvig.com/big.txt";
     isLoading(true);
     try {
       const data = await scrapeUrl({ url, sampleSize });
+      setMetadata({
+        completionTime: data.completion_time,
+        totalOccurrences: data.total_occurrences,
+        error: data.error,
+      });
       setWordOccurrences(data.word_occurrences);
+
       mutate(); // mutate history with last searched url
+      isLoading(false);
     } catch (e) {
       // TODO handle errors
       isLoading(false);
@@ -55,6 +60,8 @@ function App() {
       return;
     }
   };
+
+  const completionTime = moment.duration(metadata.completionTime).humanize();
 
   return (
     <div className="App">
@@ -66,8 +73,17 @@ function App() {
         <InputUrlForm onSubmit={onSubmit} history={history} />
         {loading ? (
           <p>Fetching results...</p>
+        ) : hasData(wordOccurrences) ? (
+          <>
+            <p className="metadata">{`Retrieved ${metadata.totalOccurrences} results in ${completionTime}.`}</p>
+            <WordOccurrences {...wordOccurrences} />
+          </>
         ) : (
-          <WordOccurrences {...wordOccurrences} />
+          metadata.error && (
+            <p className="error">
+              Couldn't find any results for the url provided.
+            </p>
+          )
         )}
       </div>
     </div>

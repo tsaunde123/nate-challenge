@@ -21,10 +21,19 @@
   width: 256px;
 }
 
+.metadata {
+  font-size: 12px;
+  color: green;
+}
+
 .occurrences {
   align-items: left;
 }
 
 .occurrence {
+  font-size: 12px;
+}
+
+.error {
   font-size: 12px;
 }

@@ -1,17 +1,20 @@
+import { ApiRoutes } from "./constants";
 import fetcher from "./fetch";
 
-export const API_BASE_PATH = process.env.API_URL || "http://localhost:8000";
-
-export const ApiRoutes = {
-  Time: `${API_BASE_PATH}/api/time`,
-  Scraper: `${API_BASE_PATH}/api/scrape`,
-  Searches: `${API_BASE_PATH}/api/searches`,
-};
+interface IScraperResult {
+  url: string;
+  completion_time: string;
+  total_occurrences: number;
+  word_occurrences: {
+    [key: string]: number;
+  };
+  error: boolean;
+}
 
 export async function scrapeUrl(data: {
   url: string;
   sampleSize: number;
-}): Promise<any> {
+}): Promise<IScraperResult> {
   return fetcher(ApiRoutes.Scraper, {
     method: "POST",
     data: {

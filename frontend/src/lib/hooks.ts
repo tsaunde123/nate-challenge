@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { ApiRoutes } from "./api";
+import { ApiRoutes } from "./constants";
 import fetcher from "./fetch";
 
 interface IHistoryType {
