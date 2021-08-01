@@ -25,7 +25,7 @@ def scrape(request):
     """ Given a url, this view scrapes the page and returns word occurrences """
     ser = ScraperEntitySerializer(data=request.data)
     ser.is_valid(raise_exception=True)
-    sample_size = ser.validated_data["sample_size"]
+    sample_size = ser.validated_data.get("sample_size", 10)
     context = dict(sample_size=sample_size)
     entity, created = ser.save()
 
@@ -48,7 +48,7 @@ def scrape(request):
 
 
 @api_view(["GET"])
-def list_searches(request):
+def history(request):
     """ Return the latest 10 searched urls, ordered """
     urls = ScraperEntity.objects.all().order_by("-start_time").values_list("url", flat=True)[:10]
     return Response(dict(urls=urls))
