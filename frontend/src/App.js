@@ -4,6 +4,21 @@ import InputUrlForm from "./components/InputUrlForm";
 import { ApiRoutes } from "./lib/api";
 import { useHistory } from "src/lib/hooks";
 
+function WordOccurrences(wordOccurrences) {
+  return (
+    <div className="occurrences">
+      {Object.keys(wordOccurrences).length > 0 &&
+        Object.entries(wordOccurrences).map(([key, value], i) => {
+          return (
+            <p className="occurrence" key={key}>
+              {key} - {value}
+            </p>
+          );
+        })}
+    </div>
+  );
+}
+
 function App() {
   const [currentTime, setCurrentTime] = useState(0);
   const [wordOccurrences, setWordOccurrences] = useState({});
@@ -41,11 +56,11 @@ function App() {
       const data = await response.json();
       setWordOccurrences(data.word_occurrences);
       mutate();
-    } catch {
+    } catch (e) {
       // TODO handle errors
       isLoading(false);
       alert("Request failed.");
-      // console.log(error);
+      console.log(e);
       return;
     }
   };
@@ -61,16 +76,7 @@ function App() {
         {loading ? (
           <p>Fetching results...</p>
         ) : (
-          <div className="occurrence">
-            {Object.keys(wordOccurrences).length > 0 &&
-              Object.entries(wordOccurrences).map(([key, value], i) => {
-                return (
-                  <p className="occurrence" key={key}>
-                    {key} - {value}
-                  </p>
-                );
-              })}
-          </div>
+          <WordOccurrences {...wordOccurrences} />
         )}
       </div>
     </div>

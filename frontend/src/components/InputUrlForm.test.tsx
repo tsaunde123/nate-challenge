@@ -1,8 +1,7 @@
 import React from "react";
 import InputUrlForm from "./InputUrlForm";
-import { render, cleanup, fireEvent, waitFor } from "@testing-library/react";
+import { render, cleanup, fireEvent } from "@testing-library/react";
 import { act } from "react-dom/test-utils";
-import userEvent from "@testing-library/user-event";
 
 afterEach(cleanup);
 

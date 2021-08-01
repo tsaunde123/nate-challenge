@@ -65,46 +65,44 @@ export default function InputUrlForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="inputsContainer">
-        <div className="urlContainer">
-          <ControlledAutocomplete
-            className="urlInput"
-            control={control}
-            name="url"
-            options={history.map((val) => {
-              return { value: val, label: val };
-            })}
-            placeholder="Select or enter a url..."
-          />
-          <ErrorMessage
-            errors={errors}
-            name="url"
-            render={({ message }) => (
-              <p className="error" data-testid="urlError">
-                {message}
-              </p>
-            )}
-          />
-        </div>
-        <div className="sampleSizeContainer">
-          <label className="label">Sample size:</label>
-          <input
-            data-testid="sampleSize"
-            className="sampleSize"
-            {...register("sampleSize")}
-            defaultValue={10}
-          />
-          <ErrorMessage
-            errors={errors}
-            name="sampleSize"
-            render={({ message }) => (
-              <p className="error" data-testid="sampleSizeError">
-                {message}
-              </p>
-            )}
-          />
-        </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="form">
+      <div className="urlContainer">
+        <ControlledAutocomplete
+          className="urlInput"
+          control={control}
+          name="url"
+          options={history.map((val) => {
+            return { value: val, label: val };
+          })}
+          placeholder="Select or enter a url..."
+        />
+        <ErrorMessage
+          errors={errors}
+          name="url"
+          render={({ message }) => (
+            <p className="error" data-testid="urlError">
+              {message}
+            </p>
+          )}
+        />
+      </div>
+      <div className="sampleSizeContainer">
+        <label className="label">Sample size:</label>
+        <input
+          data-testid="sampleSize"
+          className="sampleSize"
+          {...register("sampleSize")}
+          defaultValue={10}
+        />
+        <ErrorMessage
+          errors={errors}
+          name="sampleSize"
+          render={({ message }) => (
+            <p className="error" data-testid="sampleSizeError">
+              {message}
+            </p>
+          )}
+        />
       </div>
 
       <input type="submit" className="submit" />
