@@ -38,9 +38,7 @@ class ScraperEntitySerializer(serializers.ModelSerializer):
         return len(entity.word_occurrences or {})
 
     def create(self, validated_data):
-        freeze_time = now()
         entity, created = ScraperEntity.objects.update_or_create(
             url=validated_data.get("url").rstrip("/"),
-            defaults=dict(start_time=freeze_time, end_time=freeze_time)
         )
         return entity, created

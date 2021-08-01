@@ -7,6 +7,8 @@ class ScraperEntity(models.Model):
     word_occurrences = models.JSONField(null=True, blank=True)
 
     error = models.BooleanField(default=False)
+    last_refresh = models.DateTimeField(auto_now_add=True)
+
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True)
 

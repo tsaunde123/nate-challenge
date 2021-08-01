@@ -30,14 +30,17 @@ def scrape(request):
     entity, created = ser.save()
 
     if not created:
-        last_scrape = now() - entity.start_time
+        last_scrape = now() - entity.last_refresh
         # we return the saved results if they were scraped in the last 3h
         if last_scrape < timedelta(hours=3):
             return Response(ScraperEntitySerializer(entity, context=context).data)
 
+    start_time = now()
     word_occurrences, error = scrape_url(entity.url)
     entity.error = error
     entity.word_occurrences = word_occurrences
+    entity.start_time = start_time
+    entity.last_refresh = start_time
     entity.end_time = now()
     entity.save()
 
@@ -56,7 +59,7 @@ def scrape_url(url: str) -> Tuple[Dict[str, int], bool]:
     error = False
 
     try:
-        page = requests.get(url)
+        page = requests.get(url, timeout=5)
         html = page.content
         soup = BeautifulSoup(html, "html.parser")
 

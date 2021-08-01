@@ -10,5 +10,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # add logic here
-        ScraperEntity.objects.filter(url="https://www.swr.com").delete()
+        ScraperEntity.objects.all().delete()
         sys.exit()
