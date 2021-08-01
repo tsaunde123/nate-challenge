@@ -21,13 +21,36 @@ function WordOccurrences(wordOccurrences) {
   );
 }
 
+function DisplayResults(props) {
+  const { wordOccurrences, metadata } = props;
+
+  const hasData = (obj) => Object.keys(obj || {}).length > 0;
+
+  const completionTime = moment.duration(metadata.completionTime).humanize();
+  return (
+    <>
+      {hasData(wordOccurrences) ? (
+        <>
+          <p className="metadata">{`Retrieved ${metadata.totalOccurrences} results in ${completionTime}.`}</p>
+          <WordOccurrences {...wordOccurrences} />
+        </>
+      ) : (
+        metadata.error && (
+          <p className="error">
+            Couldn't find any results for the url provided.
+          </p>
+        )
+      )}
+    </>
+  );
+}
+
 function App() {
   const [currentTime, setCurrentTime] = useState(0);
   const [wordOccurrences, setWordOccurrences] = useState({});
   const [metadata, setMetadata] = useState({});
   const [loading, isLoading] = useState(false);
   const { history, mutate } = useHistory();
-  const hasData = (obj) => Object.keys(obj || {}).length > 0;
 
   useEffect(() => {
     fetch(ApiRoutes.Time)
@@ -61,8 +84,6 @@ function App() {
     }
   };
 
-  const completionTime = moment.duration(metadata.completionTime).humanize();
-
   return (
     <div className="App">
       <header className="App-header">
@@ -73,17 +94,11 @@ function App() {
         <InputUrlForm onSubmit={onSubmit} history={history} />
         {loading ? (
           <p>Fetching results...</p>
-        ) : hasData(wordOccurrences) ? (
-          <>
-            <p className="metadata">{`Retrieved ${metadata.totalOccurrences} results in ${completionTime}.`}</p>
-            <WordOccurrences {...wordOccurrences} />
-          </>
         ) : (
-          metadata.error && (
-            <p className="error">
-              Couldn't find any results for the url provided.
-            </p>
-          )
+          <DisplayResults
+            wordOccurrences={wordOccurrences}
+            metadata={metadata}
+          />
         )}
       </div>
     </div>
