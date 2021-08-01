@@ -6,6 +6,25 @@ import { useHistory } from "src/lib/hooks";
 import { ApiRoutes } from "./lib/constants";
 import moment from "moment";
 
+function History() {
+  const { history } = useHistory();
+
+  return (
+    history.length > 0 && (
+      <div className="history">
+        <h2>History</h2>
+        {history.map((url, i) => {
+          return (
+            <p className="historyItem" key={`history-${i}`}>
+              {url}
+            </p>
+          );
+        })}
+      </div>
+    )
+  );
+}
+
 function WordOccurrences(wordOccurrences) {
   return (
     <div className="occurrences">
@@ -39,14 +58,18 @@ function DisplayResults({ results }) {
     <>
       {hasData(wordOccurrences) ? (
         <>
+          <h2>Results</h2>
           <p className="metadata">{`Retrieved ${totalOccurrences} results in ${readableCompletionTime}.`}</p>
           <WordOccurrences {...wordOccurrences} />
         </>
       ) : (
         error && (
-          <p className="error">
-            Couldn't find any results for the url provided.
-          </p>
+          <>
+            <h2>Results</h2>
+            <p className="error">
+              Couldn't find any results for the url provided.
+            </p>
+          </>
         )
       )}
     </>
@@ -57,7 +80,7 @@ function App() {
   const [currentTime, setCurrentTime] = useState(0);
   const [results, setResults] = useState({});
   const [loading, isLoading] = useState(false);
-  const { history, mutate } = useHistory();
+  const { mutate } = useHistory();
 
   useEffect(() => {
     fetch(ApiRoutes.Time)
@@ -93,7 +116,8 @@ function App() {
       </header>
       <div className="App-body">
         <p>The current time is {currentTime}.</p>
-        <InputUrlForm onSubmit={onSubmit} history={history} />
+        <InputUrlForm onSubmit={onSubmit} />
+        <History />
         {loading ? (
           <p>Fetching results...</p>
         ) : (

@@ -5,10 +5,8 @@ import { ErrorMessage } from "@hookform/error-message";
 import * as yup from "yup";
 import "./InputUrlForm.css";
 
-import ControlledAutocomplete from "./ControlledAutocomplete";
-
 interface IFormInputsProps {
-  url: { label: string; value: string };
+  url: string;
   sampleSize: number;
 }
 
@@ -17,63 +15,42 @@ interface IFormSubmissionProps {
   sampleSize: number;
 }
 
-// The url type is an object rather than a string because the input field returns an object based on the user's
-// input rather than a string, which would otherwise cause validation errors.
 const schema = yup.object().shape({
   url: yup
-    .object()
-    .shape({
-      label: yup.string().url().required(),
-      value: yup.string().url().required(),
-    })
-    .required("This field is required")
-    .typeError("Please enter a valid url: e.g. https://www.bbc.com"),
+    .string()
+    .url("Please enter a valid url: e.g. https://www.bbc.com")
+    .required("This field is required"),
   sampleSize: yup
     .number()
     .positive()
     .integer()
     .required("This field is required")
-    .typeError("Please enter a valid a number"),
+    .typeError("Please enter a positive a number"),
 });
 
 export default function InputUrlForm({
   onSubmit: submitForm,
-  history = [],
 }: {
   onSubmit: ({ url, sampleSize }: IFormSubmissionProps) => {};
-  history?: any;
 }) {
   const {
     register,
-    control,
     handleSubmit,
     formState: { errors, isDirty },
   } = useForm<IFormInputsProps>({
     resolver: yupResolver(schema),
   });
 
-  const flattenValue = (option: { value: string; label: string }) =>
-    option.value;
-
   const onSubmit = async (formData: IFormInputsProps) => {
     if (!isDirty) return;
-    const url: string = flattenValue(formData.url as any);
-    const sampleSize: number = formData.sampleSize;
-    submitForm({ url, sampleSize });
+    submitForm({ ...formData });
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="form">
       <div className="urlContainer">
-        <ControlledAutocomplete
-          className="urlInput"
-          control={control}
-          name="url"
-          options={history.map((val) => {
-            return { value: val, label: val };
-          })}
-          placeholder="Select or enter a url..."
-        />
+        <label className="label">Enter a url:</label>
+        <input data-testid="urlInput" className="url" {...register("url")} />
         <ErrorMessage
           errors={errors}
           name="url"

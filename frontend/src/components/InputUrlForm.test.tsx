@@ -11,39 +11,35 @@ const mockOnSubmit = jest.fn(({ url, sampleSize }) => {
 
 describe("Scrape Url", () => {
   describe("with valid inputs", () => {
-    // it("form submitted correctly when the inputs are valid", async () => {
-    //   const { getByTestId, getByRole, container } = render(
-    //     <InputUrlForm onSubmit={mockOnSubmit} />
-    //   );
-    //   await act(async () => {
-    //     // React-select is inherently difficult to test. Url input field has to be accessed using querySelector as a workaround.
-    //     // See link for a better explanation: https://polvara.me/posts/testing-a-custom-select-with-react-testing-library
-    //     const urlInput = container.querySelector(
-    //       ".autoCompleteContainer__input"
-    //     ).firstChild;
-    //     fireEvent.change(urlInput, {
-    //       target: { value: "https://www.bbc.com" },
-    //     });
-    //     fireEvent.change(getByTestId("sampleSize"), {
-    //       target: { value: 15 },
-    //     });
-    //   });
-    //   await act(async () => {
-    //     fireEvent.submit(getByRole("button"));
-    //   });
-    //   // mockShowResults is not called in time due to react-hook-form validation being async
-    //   expect(mockOnSubmit).toBeCalledWith("https://www.bbc.com", 15);
-    // });
-  });
-  describe("with invalid url", () => {
-    it("renders the url error message", async () => {
-      const { getByRole, getByTestId, container } = render(
+    it("form submitted correctly when the inputs are valid", async () => {
+      const { getByTestId, getByRole } = render(
         <InputUrlForm onSubmit={mockOnSubmit} />
       );
       await act(async () => {
-        const urlInput = container.querySelector(
-          ".autoCompleteContainer__input"
-        ).firstChild;
+        const urlInput = getByTestId("urlInput");
+        fireEvent.change(urlInput, {
+          target: { value: "https://www.bbc.com" },
+        });
+        fireEvent.change(getByTestId("sampleSize"), {
+          target: { value: 15 },
+        });
+      });
+      await act(async () => {
+        fireEvent.submit(getByRole("button"));
+      });
+      expect(mockOnSubmit).toBeCalledWith({
+        url: "https://www.bbc.com",
+        sampleSize: 15,
+      });
+    });
+  });
+  describe("with invalid url", () => {
+    it("renders the url error message", async () => {
+      const { getByRole, getByTestId } = render(
+        <InputUrlForm onSubmit={mockOnSubmit} />
+      );
+      await act(async () => {
+        const urlInput = getByTestId("urlInput");
         fireEvent.change(urlInput, {
           target: { value: "invalid url" },
         });
@@ -58,16 +54,13 @@ describe("Scrape Url", () => {
   });
   describe("with invalid sample size", () => {
     it("calls the onSubmit function", async () => {
-      const { getByTestId, getByText, getByRole, container } = render(
+      const { getByTestId, getByText, getByRole } = render(
         <InputUrlForm onSubmit={mockOnSubmit} />
       );
       await act(async () => {
-        fireEvent.change(
-          container.querySelector(".autoCompleteContainer__input").firstChild,
-          {
-            target: { value: "https://www.validurl.com" },
-          }
-        );
+        fireEvent.change(getByTestId("urlInput"), {
+          target: { value: "https://www.validurl.com" },
+        });
         fireEvent.change(getByTestId("sampleSize"), {
           target: { value: "eek" },
         });
@@ -77,23 +70,20 @@ describe("Scrape Url", () => {
         fireEvent.submit(getByRole("button"));
       });
       expect(getByTestId("sampleSizeError")).toBeVisible();
-      expect(getByText("Please enter a valid a number")).toBeInTheDocument();
+      expect(getByText("Please enter a positive a number")).toBeInTheDocument();
       expect(mockOnSubmit).not.toBeCalled();
     });
   });
 
   describe("with both invalid inputs", () => {
     it("calls the onSubmit function", async () => {
-      const { getByTestId, getByRole, container } = render(
+      const { getByTestId, getByRole } = render(
         <InputUrlForm onSubmit={mockOnSubmit} />
       );
       await act(async () => {
-        fireEvent.change(
-          container.querySelector(".autoCompleteContainer__input").firstChild,
-          {
-            target: { value: "invalid" },
-          }
-        );
+        fireEvent.change(getByTestId("urlInput"), {
+          target: { value: "invalid" },
+        });
 
         fireEvent.change(getByTestId("sampleSize"), {
           target: { value: "eek" },

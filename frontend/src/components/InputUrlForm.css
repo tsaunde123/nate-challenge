@@ -15,12 +15,17 @@
   width: 256px;
 }
 
+.historyItem {
+  font-size: small;
+}
+
 .sampleSize {
   width: 48px;
 }
 
 .label {
   margin-right: 24px;
+  font-weight: bold;
 }
 
 .submit {
