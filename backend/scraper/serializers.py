@@ -18,7 +18,8 @@ class ScraperEntitySerializer(serializers.ModelSerializer):
             "word_occurrences",
             "sample_size",
             "completion_time",
-            "total_occurrences"
+            "total_occurrences",
+            "error"
         )
 
     def get_completion_time(self, entity: ScraperEntity):
