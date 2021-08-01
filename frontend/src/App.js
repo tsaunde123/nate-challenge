@@ -31,7 +31,10 @@ function DisplayResults({ results }) {
 
   const hasData = (obj) => Object.keys(obj || {}).length > 0;
 
-  const readableCompletionTime = moment.duration(completionTime).humanize();
+  const readableCompletionTime = moment
+    .duration(completionTime, "seconds")
+    .humanize();
+
   return (
     <>
       {hasData(wordOccurrences) ? (
