@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import InputUrlForm from "./components/InputUrlForm";
-import { ApiRoutes } from "./lib/api";
+import { ApiRoutes, scrapeUrl } from "./lib/api";
 import { useHistory } from "src/lib/hooks";
 
 function WordOccurrences(wordOccurrences) {
@@ -39,23 +39,14 @@ function App() {
     }
   }, [wordOccurrences]);
 
-  const scrapeUrl = async ({ url, sampleSize }) => {
+  const onSubmit = async ({ url, sampleSize }) => {
     // const url = "https://www.bbc.co.uk/";
     // const url2 = "https://norvig.com/big.txt";
     isLoading(true);
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        url: url,
-        sample_size: sampleSize,
-      }),
-    };
     try {
-      const response = await fetch(ApiRoutes.Scraper, requestOptions);
-      const data = await response.json();
+      const data = await scrapeUrl({ url, sampleSize });
       setWordOccurrences(data.word_occurrences);
-      mutate();
+      mutate(); // mutate history with last searched url
     } catch (e) {
       // TODO handle errors
       isLoading(false);
@@ -72,7 +63,7 @@ function App() {
       </header>
       <div className="App-body">
         <p>The current time is {currentTime}.</p>
-        <InputUrlForm onSubmit={scrapeUrl} history={history} />
+        <InputUrlForm onSubmit={onSubmit} history={history} />
         {loading ? (
           <p>Fetching results...</p>
         ) : (
