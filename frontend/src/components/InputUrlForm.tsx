@@ -47,7 +47,6 @@ export default function InputUrlForm({
     register,
     control,
     handleSubmit,
-    reset,
     formState: { errors, isDirty },
   } = useForm<IFormInputsProps>({
     resolver: yupResolver(schema),
@@ -61,7 +60,6 @@ export default function InputUrlForm({
     const url: string = flattenValue(formData.url as any);
     const sampleSize: number = formData.sampleSize;
     submitForm({ url, sampleSize });
-    reset();
   };
 
   return (

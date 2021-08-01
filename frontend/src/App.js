@@ -21,21 +21,26 @@ function WordOccurrences(wordOccurrences) {
   );
 }
 
-function DisplayResults(props) {
-  const { wordOccurrences, metadata } = props;
+function DisplayResults({ results }) {
+  const {
+    word_occurrences: wordOccurrences,
+    completion_time: completionTime,
+    total_occurrences: totalOccurrences,
+    error,
+  } = results;
 
   const hasData = (obj) => Object.keys(obj || {}).length > 0;
 
-  const completionTime = moment.duration(metadata.completionTime).humanize();
+  const readableCompletionTime = moment.duration(completionTime).humanize();
   return (
     <>
       {hasData(wordOccurrences) ? (
         <>
-          <p className="metadata">{`Retrieved ${metadata.totalOccurrences} results in ${completionTime}.`}</p>
+          <p className="metadata">{`Retrieved ${totalOccurrences} results in ${readableCompletionTime}.`}</p>
           <WordOccurrences {...wordOccurrences} />
         </>
       ) : (
-        metadata.error && (
+        error && (
           <p className="error">
             Couldn't find any results for the url provided.
           </p>
@@ -47,8 +52,7 @@ function DisplayResults(props) {
 
 function App() {
   const [currentTime, setCurrentTime] = useState(0);
-  const [wordOccurrences, setWordOccurrences] = useState({});
-  const [metadata, setMetadata] = useState({});
+  const [results, setResults] = useState({});
   const [loading, isLoading] = useState(false);
   const { history, mutate } = useHistory();
 
@@ -66,12 +70,7 @@ function App() {
     isLoading(true);
     try {
       const data = await scrapeUrl({ url, sampleSize });
-      setMetadata({
-        completionTime: data.completion_time,
-        totalOccurrences: data.total_occurrences,
-        error: data.error,
-      });
-      setWordOccurrences(data.word_occurrences);
+      setResults(data);
 
       mutate(); // mutate history with last searched url
       isLoading(false);
@@ -95,10 +94,7 @@ function App() {
         {loading ? (
           <p>Fetching results...</p>
         ) : (
-          <DisplayResults
-            wordOccurrences={wordOccurrences}
-            metadata={metadata}
-          />
+          <DisplayResults results={results} />
         )}
       </div>
     </div>
