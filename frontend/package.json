@@ -4,7 +4,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "yarn jest --watch"
+    "test": "jest"
   },
   "dependencies": {
     "@headlessui/react": "^1.4.0",
