@@ -20,6 +20,7 @@ services:
       context: .
       dockerfile: ./compose/django/Dockerfile
     container_name: django
+    restart: on-failure
     depends_on:
       - postgres
       - redis
