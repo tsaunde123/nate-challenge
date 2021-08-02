@@ -1,25 +1,6 @@
 from rest_framework import serializers
 
-from backend.scraper.models import WordCount, ScraperEntity, Scrape
-
-
-class ScrapeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Scrape
-        fields = [
-            "id",
-            "url",
-            "words",
-            "created_at",
-            "completed_at",
-        ]
-
-        read_only_fields = [
-            "id",
-            "words",
-            "created_at",
-            "completed_at",
-        ]
+from .models import Scrape, WordCount
 
 
 class WordCountSerializer(serializers.ModelSerializer):
@@ -40,41 +21,24 @@ class WordCountSerializer(serializers.ModelSerializer):
         ]
 
 
-class ScraperEntitySerializer(serializers.ModelSerializer):
-    url = serializers.URLField(required=True)
-    sample_size = serializers.IntegerField(required=True, write_only=True)
-    completion_time = serializers.SerializerMethodField()
-    word_occurrences = serializers.SerializerMethodField()
-    total_occurrences = serializers.SerializerMethodField()
+class ScrapeSerializer(serializers.ModelSerializer):
+    words = WordCountSerializer(many=True, read_only=True)
 
     class Meta:
-        model = ScraperEntity
-        fields = (
+        model = Scrape
+        fields = [
+            "id",
             "url",
-            "word_occurrences",
-            "sample_size",
-            "completion_time",
-            "total_occurrences",
-            "error"
-        )
+            "words",
+            "created_at",
+            "completed_at",
+            "error",
+        ]
 
-    def get_completion_time(self, entity: ScraperEntity):
-        return entity.end_time - entity.start_time
-
-    def get_word_occurrences(self, entity: ScraperEntity):
-        word_occurrences = entity.word_occurrences or {}
-        max_sample_size = len(word_occurrences)
-        sample_size = self.context.get("sample_size", 10)
-        sample_size = max_sample_size if sample_size > max_sample_size else sample_size
-        keys = list(word_occurrences.keys())[:sample_size]
-        sample = {key: word_occurrences[key] for key in keys}
-        return sample
-
-    def get_total_occurrences(self, entity: ScraperEntity):
-        return len(entity.word_occurrences or {})
-
-    def create(self, validated_data):
-        entity, created = ScraperEntity.objects.update_or_create(
-            url=validated_data.get("url").rstrip("/"),
-        )
-        return entity, created
+        read_only_fields = [
+            "id",
+            "words",
+            "created_at",
+            "completed_at",
+            "error",
+        ]

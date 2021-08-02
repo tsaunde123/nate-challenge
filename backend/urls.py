@@ -8,6 +8,5 @@ router.register(r"scrapes", scrape_views.ScrapeViewSet, basename="scrapes")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("api/", include("backend.api")),
     path("", include(router.urls)),
 ]
