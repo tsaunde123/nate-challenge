@@ -7,6 +7,7 @@ export default function DetailView() {
     query: { id },
   } = useRouter();
   const { scrape, isLoading, isError } = useScrape(id);
+  console.log(scrape);
 
   return (
     <div className="mt-4">
@@ -17,7 +18,7 @@ export default function DetailView() {
         <p>Could not fetch</p>
       ) : (
         <>
-          <h2 className="text-xl text-gray-700">{scrape.url}</h2>
+          <h2 className="text-xl text-gray-700 mb-1">{scrape.url}</h2>
           <div className="flex flex-col">
             <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="py-2 align-middle inline-block  sm:px-6 lg:px-8">
@@ -70,6 +71,7 @@ export default function DetailView() {
               </div>
             </div>
           </div>
+          {!scrape.completed_at && <p className="mt-1">Processing...</p>}
         </>
       )}
     </div>
