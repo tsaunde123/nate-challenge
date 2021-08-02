@@ -7,7 +7,6 @@ export default function DetailView() {
     query: { id },
   } = useRouter();
   const { scrape, isLoading, isError } = useScrape(id);
-  console.log(scrape);
 
   return (
     <div className="mt-4">
