@@ -1,52 +1,108 @@
-version: '3.5'
+version: "3.9"
 
 services:
   postgres:
-    image: postgres:11.6
-    restart: unless-stopped
+    image: postgres
     container_name: postgres
-    ports:
-      - "5432:5432"
-#    environment:
-#      POSTGRES_PASSWORD: ${DB_PASSWORD}
-#      POSTGRES_DB: ${DB_NAME}
-#      POSTGRES_USER: ${DB_USER}
-    env_file:
-      - .env.postgres
-#    volumes:
-#      - ~/srv/docker/template-postgres/data:/var/lib/postgresql/data:rw
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
 
-  django:
-    container_name: django
+  redis:
+    image: redis:5.0
+    container_name: redis
+
+  django: &django
     build:
       context: .
-      dockerfile: ./backend/Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./backend:/app:rw
+      dockerfile: ./compose/django/Dockerfile
+    container_name: django
     depends_on:
       - postgres
-    env_file:
-      - .env
+      - redis
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "sleep 5 && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+  celeryworker:
+    <<: *django
+    image: nate_local_celeryworker
+    container_name: celeryworker
+    depends_on:
+      - redis
+      - postgres
+    ports: []
+    command: celery -A backend.celery worker -l INFO
 
-  react:
-    container_name: react
+  frontend:
     build:
       context: .
-      dockerfile: ./frontend/Dockerfile
-#    command: yarn run start:dev
-    ports:
-      - 3000:3000
+      dockerfile: ./compose/frontend/Dockerfile
+    container_name: frontend
     volumes:
-      - ./frontend/src:/app/src:rw
-      - ./frontend/public:/app/public:rw
+      - ./frontend:/app
+    depends_on:
+      - django
+    ports:
+      - "3000:3000"
+    command: >
+      sh -c "cd /app && yarn dev"
 
+
+#version: '3.5'
+#
+#services:
+#  postgres:
+#    image: postgres:11.6
+#    restart: unless-stopped
+#    container_name: postgres
+#    ports:
+#      - "5432:5432"
+##    environment:
+##      POSTGRES_PASSWORD: ${DB_PASSWORD}
+##      POSTGRES_DB: ${DB_NAME}
+##      POSTGRES_USER: ${DB_USER}
+#    env_file:
+#      - .env.postgres
+##    volumes:
+##      - ~/srv/docker/template-postgres/data:/var/lib/postgresql/data:rw
+#
+#  django:
+#    container_name: django
+#    build:
+#      context: .
+#      dockerfile: ./backend/Dockerfile
+#    command: python manage.py runserver 0.0.0.0:8000
+#    ports:
+#      - "8000:8000"
 #    volumes:
-#      - './:/app'
-#      - '/app/node_modules'
-#    stdin_open: true
-#    environment:
-#      - CHOKIDAR_USEPOLLING=true
-    command: yarn start
+#      - ./backend:/app:rw
+#    depends_on:
+#      - postgres
+#    env_file:
+#      - .env
+#
+#  react:
+#    container_name: react
+#    build:
+#      context: .
+#      dockerfile: ./frontend/Dockerfile
+##    command: yarn run start:dev
+#    ports:
+#      - 3000:3000
+#    volumes:
+#      - ./frontend/src:/app/src:rw
+#      - ./frontend/public:/app/public:rw
+#
+##    volumes:
+##      - './:/app'
+##      - '/app/node_modules'
+##    stdin_open: true
+##    environment:
+##      - CHOKIDAR_USEPOLLING=true
+#    command: yarn start
