@@ -25,5 +25,5 @@ class WordCount(models.Model):
     scrape = models.ForeignKey(
         Scrape, on_delete=models.CASCADE, related_name="words"
     )
-    word = models.CharField(max_length=50)
+    word = models.CharField(max_length=200)
     count = models.BigIntegerField()

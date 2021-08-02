@@ -22,7 +22,7 @@ def scrape(scrape_id: int):
         obj.count_words(text)
     except Exception as e:
         obj.error = True
-        logger.exception(f"Could not count words fpr {obj.url}")
+        logger.exception(f"Could not count words for {obj.url}")
     finally:
         obj.completed_at = timezone.now()
         obj.save()
