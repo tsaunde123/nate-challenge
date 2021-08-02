@@ -29,6 +29,7 @@ services:
       - "8000:8000"
     command: >
       sh -c "sleep 5 && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
   celeryworker:
     <<: *django
     image: nate_local_celeryworker
@@ -44,9 +45,10 @@ services:
       context: .
       dockerfile: ./compose/frontend/Dockerfile
     container_name: frontend
+    restart: always
     volumes:
       - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
     ports:
-      - "3000:3000"
-    command: >
-      sh -c "cd /app && yarn dev"
+      - 3000:3000
