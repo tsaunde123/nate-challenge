@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from corsheaders.defaults import default_methods
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -59,6 +61,15 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'backend.urls'
+
+CORS_ALLOW_METHODS = list(default_methods)
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = []
+if DEBUG:
+    CORS_ORIGIN_WHITELIST += [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
 
 TEMPLATES = [
     {
