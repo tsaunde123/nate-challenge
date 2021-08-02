@@ -1,6 +1,6 @@
 from django.urls import path
 
-from scraper.views import time, scrape_view, history
+from backend.scraper.views import time, scrape_view, history
 
 urlpatterns = [
     path("time", time),

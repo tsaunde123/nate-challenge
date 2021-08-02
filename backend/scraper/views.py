@@ -10,10 +10,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.utils.timezone import now
 
-from .models import ScraperEntity, Scrape
-from .scrapers import scrape
-from .serializers import ScraperEntitySerializer, ScrapeSerializer
-from .tasks import scrape_async
+from backend.scraper.tasks import scrape_async
+from backend.scraper.models import Scrape, ScraperEntity
+from backend.scraper.serializers import ScrapeSerializer, ScraperEntitySerializer
 
 
 @api_view(["GET"])

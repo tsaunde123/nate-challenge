@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import ScraperEntity, Scrape, WordCount
+from backend.scraper.models import WordCount, ScraperEntity, Scrape
 
 
 class ScrapeSerializer(serializers.ModelSerializer):

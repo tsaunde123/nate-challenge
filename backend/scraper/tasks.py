@@ -1,8 +1,8 @@
-from django.utils import timezone
 from celery import shared_task
+from django.utils import timezone
 
-from .scrapers import scrape
-from .models import Scrape
+from backend.scraper.models import Scrape
+from backend.scraper.scrapers import scrape
 
 
 @shared_task
