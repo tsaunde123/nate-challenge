@@ -1,0 +1,13 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  /* * {
+    @apply outline-none;
+  } */
+
+  body {
+    @apply bg-blue-50;
+  }
+}
