@@ -13,6 +13,9 @@ def scrape_async(scrape_id: int):
         return
 
     words = scrape(obj.url)
-    print(f'Found {len(words)} words in {obj.url}')
+    occurrences = {}
+    for word in words:
+        occurrences[word.lower()] = occurrences.get(word.lower(), 0) + 1
+    print(f'Found {len(occurrences)} words in {obj.url}')
     obj.completed_at = timezone.now()
     obj.save()
