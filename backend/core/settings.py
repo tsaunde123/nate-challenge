@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'scraper.apps.ScraperConfig',
+    'scraper',
 ]
 
 MIDDLEWARE = [
@@ -84,9 +84,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME", "db_name"),
-        "USER": os.environ.get("DB_USER", "user"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", ""),
+        "NAME": os.environ.get("DB_NAME", "postgres"),
+        "USER": os.environ.get("DB_USER", "postgres"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "postgres"),
         "HOST": os.environ.get("DB_HOST", "localhost"),
         "PORT": os.environ.get("DB_PORT", "5432"),
     }
@@ -137,3 +137,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000'
 ]
+
+CELERY_BROKER_URL = "redis://redis:6379"
