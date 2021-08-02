@@ -1,23 +1,23 @@
 import "@testing-library/jest-dom";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import Home from "../../pages/index";
 
 describe("Home page", () => {
-  it("should render the navbar", () => {
-    render(<Home />);
+  it("should render the navbar items", () => {
+    const { getByText } = render(<Home />);
 
-    const heading = screen.getByText(/Nate: Challenge/i);
-    const search = screen.getByText(/Search/i);
-    const history = screen.getByText(/History/i);
+    const heading = getByText(/Nate: Challenge/i);
+    const search = getByText(/Search/i);
+    const history = getByText(/History/i);
 
     expect(heading).toBeInTheDocument();
     expect(search).toBeInTheDocument();
     expect(history).toBeInTheDocument();
   });
   it("should render the url input", () => {
-    render(<Home />);
+    const { getByPlaceholderText } = render(<Home />);
 
-    const input = screen.getByPlaceholderText(/URL/i);
+    const input = getByPlaceholderText(/URL/i);
 
     expect(input).toBeInTheDocument();
   });
