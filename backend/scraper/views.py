@@ -5,12 +5,15 @@ import requests
 from bs4 import BeautifulSoup
 from datetime import timedelta
 
+from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.utils.timezone import now
 
-from .models import ScraperEntity
-from .serializers import ScraperEntitySerializer
+from .models import ScraperEntity, Scrape
+from .scrapers import scrape
+from .serializers import ScraperEntitySerializer, ScrapeSerializer
+from .tasks import scrape_async
 
 
 @api_view(["GET"])
@@ -20,8 +23,32 @@ def time(request):
     return Response({"time": time.time()})
 
 
+class ScrapeViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    serializer_class = ScrapeSerializer
+    queryset = Scrape.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        # spawn worker
+        scrape_async.delay(serializer.data.get("id"))
+        # scrape(serializer.validated_data["url"])
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
+
 @api_view(["POST"])
-def scrape(request):
+def scrape_view(request):
     """ Given a url, this view scrapes the page and returns word occurrences """
     ser = ScraperEntitySerializer(data=request.data)
     ser.is_valid(raise_exception=True)
