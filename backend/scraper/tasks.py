@@ -1,21 +1,28 @@
-from celery import shared_task
-from django.utils import timezone
+import logging
 
-from backend.scraper.models import Scrape
-from backend.scraper.scrapers import scrape
+from django.utils import timezone
+from celery import shared_task
+
+from .models import Scrape
+from .scrapers import scrape_page
+
+logger = logging.getLogger(__name__)
 
 
 @shared_task
-def scrape_async(scrape_id: int):
+def scrape(scrape_id: int):
     try:
-        obj = Scrape.objects.get(id=scrape_id)
+        obj: Scrape = Scrape.objects.get(id=scrape_id)
     except Scrape.DoesNotExist:
         return
 
-    words = scrape(obj.url)
-    occurrences = {}
-    for word in words:
-        occurrences[word.lower()] = occurrences.get(word.lower(), 0) + 1
-    print(f'Found {len(occurrences)} words in {obj.url}')
-    obj.completed_at = timezone.now()
-    obj.save()
+    try:
+        text = scrape_page(obj.url)
+        logger.info(f"Received text from {obj.url}")
+        obj.count_words(text)
+    except Exception as e:
+        obj.error = True
+        logger.exception(f"Could not count words fpr {obj.url}")
+    finally:
+        obj.completed_at = timezone.now()
+        obj.save()
