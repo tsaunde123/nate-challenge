@@ -25,6 +25,9 @@ up.
 
 `docker-compose logs -f` follow the docker logs.
 
+The frontend runs on `http://localhost:3000`.
+Django runs on `http://localhost:8000`
+
 
 ##### Docker Commands
 
