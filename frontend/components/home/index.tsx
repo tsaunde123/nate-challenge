@@ -1,25 +1,29 @@
 import { API_URL } from "@/lib/constants";
-import fetcher from "@/lib/fetcher";
+import fetcher, { parseFetchErrors } from "@/lib/fetcher";
 import { IScrape } from "@/types/scrape";
 import { useRouter } from "next/dist/client/router";
 import { useState } from "react";
 
 export default function HomeView() {
   const [input, setInput] = useState("");
+  const [error, setError] = useState("");
   const router = useRouter();
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!input) return;
 
     try {
+      setError("");
       const resp = await (fetcher(`${API_URL}/scrapes/`, {
         method: "POST",
         data: { url: input },
       }) as Promise<IScrape>);
       router.push(`/scrapes/${resp.id}`);
     } catch (err) {
-      console.log(err);
-      // TODO: handle error
+      const errors = await parseFetchErrors(err);
+      if (errors && errors.url) {
+        setError(errors.url.message);
+      }
     }
   };
 
@@ -34,6 +38,7 @@ export default function HomeView() {
           onChange={(e) => setInput(e.target.value)}
         />
       </form>
+      {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
     </>
   );
 }
