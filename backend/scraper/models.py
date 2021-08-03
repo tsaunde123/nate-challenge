@@ -20,6 +20,9 @@ class Scrape(models.Model):
         # insert in bulk to avoid having too many queries
         WordCount.objects.bulk_create(objs)
 
+    def __str__(self):
+        return f'{self.url} - {self.created_at}'
+
 
 class WordCount(models.Model):
     scrape = models.ForeignKey(
@@ -27,3 +30,6 @@ class WordCount(models.Model):
     )
     word = models.CharField(max_length=200)
     count = models.BigIntegerField()
+
+    def __str__(self):
+        return f'{self.word} - {self.count}'
