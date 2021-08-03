@@ -72,9 +72,33 @@ I use [`Redis`](https://redis.io/) as a message broker for task scheduling in th
 ##### Backend
 
 This project follows typical `Django` style contentions with the main project
-folder inside `backend`; this contains the `settings.py` and other relevant folders. I use [`Celery`](https://docs.celeryproject.org/en/stable/index.html) for task scheduling.
+folder inside `backend`; this contains the `settings.py` and other relevant folders. I use [`Celery`](https://docs.celeryproject.org/en/stable/index.html) scheduling scraper tasks.
+The urls are scraped using `Selenium`.
 
 ##### Frontend
 
 The current design is to have a folder in the project root called `frontend` to
 contain all `React`/frontend files. I use [`Nextjs`](https://nextjs.org/) with `TypeScript` support and `Tailwind CSS`.
+
+Distributed system design
+-----
+
+The application is fully dockerized making it easy to deploy using a cloud provider.
+
+WorkerManager / Worker design using `Celery` to schedule tasks enables async / non-blocking processing of the scraping requests. This means
+we are able to handle more requests (throughput) as the number of searches increases and larger input text (compute) 
+
+Extending the solution
+-----
+Improving loading and error states on the frontend
+
+Improving test coverage
+
+Adding pagination on the scraper results would allow me to display more results to the user (at the moment I limit the results to 100 rows to reduce the load on the frontend)
+
+At the moment each time the user requests a url we scrape the page and persist the results. Even if that url has been requested recently. Checking for previous requests in the backend
+would lead to a faster response rate for previous requests and would reduce the amount of data persisted.
+
+Authentication should be added
+
+More configuration would need to be added in order to be able to deploy the app in a production environment.
