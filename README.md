@@ -90,7 +90,7 @@ contain all `React`/frontend files. I use [`Nextjs`](https://nextjs.org/) with `
 Distributed system design
 -----
 
-The application is fully dockerized making it easy to deploy using a cloud provider.
+The application is fully dockerized making it easy to deploy and scale/replicate using a cloud provider.
 
 WorkerManager / Worker design using `Celery` to schedule tasks enables async / non-blocking processing of the scraping requests. This means
 we are able to handle more requests (throughput) as the number of searches increases and larger input text (compute) 
