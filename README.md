@@ -80,7 +80,7 @@ I use [`Redis`](https://redis.io/) as a message broker for task scheduling in th
 This project follows typical `Django` style conventions with the main project
 folder inside `backend`; this contains the `settings.py` and other relevant folders. 
 Django is a good solution as it provides database management, table migrations, views, security, CORS, serializers, etc).
-I use [`Celery`](https://docs.celeryproject.org/en/stable/index.html) tp schedule scraper tasks.
+I use [`Celery`](https://docs.celeryproject.org/en/stable/index.html) to schedule scraper tasks.
 The urls are scraped using `Selenium`.
 
 ##### Frontend
