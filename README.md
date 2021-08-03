@@ -40,7 +40,7 @@ up.
 Note: The container names you need are in the `docker-compose.yml` file.
 
 Note: The containers are reading from the host filesystem so editing files
-locally will propagate changes inside the contaner.
+locally will propagate changes inside the container.
 
 `docker-compose stop <container name>` stops a particular container.
 
