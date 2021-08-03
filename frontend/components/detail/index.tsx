@@ -17,7 +17,25 @@ export default function DetailView() {
         <p>Could not fetch</p>
       ) : (
         <>
-          <h2 className="text-xl text-gray-700 mb-1">{scrape.url}</h2>
+          <h2 className="text-xl text-gray-700 mb-1">{`${scrape.url}: `}</h2>
+          <span
+            className={cx(
+              "px-2 inline-flex text-xs leading-5 font-semibold rounded-full mb-1",
+              {
+                "bg-green-100 text-green-800":
+                  !!scrape.completed_at && !scrape.error,
+                "bg-yellow-100 text-yellow-800":
+                  !scrape.completed_at && !scrape.error,
+                "bg-red-100 text-red-800": scrape.error,
+              }
+            )}
+          >
+            {scrape.error
+              ? "Error"
+              : scrape.completed_at
+              ? "Succeeded"
+              : "Pending"}
+          </span>
           <div className="flex flex-col">
             <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="py-2 align-middle inline-block  sm:px-6 lg:px-8">

@@ -10,7 +10,9 @@ interface IScrapeResponse {
 }
 
 export function useScrape(id): IScrapeResponse {
-  const { data, error } = useSWR(id && `${API_URL}/scrapes/${id}`, fetcher);
+  const { data, error } = useSWR(id && `${API_URL}/scrapes/${id}`, fetcher, {
+    refreshInterval: 5000,
+  }); // refresh every 5 seconds
 
   return {
     scrape: data as IScrape | null,
