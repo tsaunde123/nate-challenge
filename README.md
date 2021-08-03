@@ -17,7 +17,8 @@ inside of the frontend container so `docker exec -it frontend yarn test`. A cove
 
 The meaningful test tests the `pages/index.tsx` file to ensure the correct UI components are displayed for the user to interact with the application.
 
-#### First Run
+First Run
+-----
 
 `docker-compose build && docker-compose up -d` build and bring the containers
 up.
@@ -53,8 +54,10 @@ django container.
 Ex: `docker exec -it django python manage.py shell` puts you in the django
 shell.
 
-File Structure
+Project Structure
 -----
+I chose this tech stack as it is one I am familiar with having worked with these frameworks and tools in the past. They enabled me to implement
+a solution quickly as most tools needed come built-in. 
 
 ##### Docker
 
@@ -71,12 +74,16 @@ I use [`Redis`](https://redis.io/) as a message broker for task scheduling in th
 
 ##### Backend
 
-This project follows typical `Django` style contentions with the main project
-folder inside `backend`; this contains the `settings.py` and other relevant folders. I use [`Celery`](https://docs.celeryproject.org/en/stable/index.html) scheduling scraper tasks.
+This project follows typical `Django` style conventions with the main project
+folder inside `backend`; this contains the `settings.py` and other relevant folders. 
+Django is a good solution as it provides database management, table migrations, views, security, CORS, serializers, etc).
+I use [`Celery`](https://docs.celeryproject.org/en/stable/index.html) tp schedule scraper tasks.
 The urls are scraped using `Selenium`.
 
 ##### Frontend
 
+I use a `React` frontend as it is the framework I am most comfortable with and is easy to setup, allowing for fast development. 
+It also allows me to build re-usable components that are easy to test, debug and maintain when working individually or within a team.
 The current design is to have a folder in the project root called `frontend` to
 contain all `React`/frontend files. I use [`Nextjs`](https://nextjs.org/) with `TypeScript` support and `Tailwind CSS`.
 
@@ -98,7 +105,5 @@ Adding pagination on the scraper results would allow me to display more results 
 
 At the moment each time the user requests a url we scrape the page and persist the results. Even if that url has been requested recently. Checking for previous requests in the backend
 would lead to a faster response rate for previous requests and would reduce the amount of data persisted.
-
-Authentication should be added
 
 More configuration would need to be added in order to be able to deploy the app in a production environment.
