@@ -10,7 +10,9 @@ interface IHistoryResponse {
 }
 
 export function useHistory(): IHistoryResponse {
-  const { data, error } = useSWR(`${API_URL}/scrapes`, fetcher);
+  const { data, error } = useSWR(`${API_URL}/scrapes`, fetcher, {
+    refreshInterval: 3000,
+  });
   return {
     history: data as IScrape[] | null,
     isLoading: !error && !data,
