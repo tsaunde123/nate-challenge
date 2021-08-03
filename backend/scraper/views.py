@@ -14,13 +14,6 @@ class ScrapeViewSet(
     viewsets.GenericViewSet,
 ):
     serializer_class = ScrapeSerializer
-    queryset = (
-        Scrape.objects.all()
-        .order_by("-created_at")
-        .prefetch_related(
-            Prefetch("words", queryset=WordCount.objects.order_by("-count"))
-        )
-    )
 
     def get_queryset(self):
         # limit to n words to avoid slowing down the UI until pagination is implemented
